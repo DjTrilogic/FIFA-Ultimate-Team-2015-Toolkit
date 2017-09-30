@@ -6,18 +6,21 @@ using UltimateTeam.Toolkit.Extensions;
 using UltimateTeam.Toolkit.Models;
 using UltimateTeam.Toolkit.Parameters;
 using UltimateTeam.Toolkit.Requests;
+using UltimateTeam.Toolkit.Services;
 
 namespace UltimateTeam.Toolkit.Factories
 {
     public class FutRequestFactories
     {
-        private readonly CookieContainer _cookieContainer;
+        private readonly Resources _webResources = new Resources(AppVersion.WebApp);
 
-        private readonly Resources _resources = new Resources();
+        private readonly Resources _mobileResources = new Resources(AppVersion.CompanionApp);
 
-        private string _phishingToken;
+        private Resources _resources;
 
-        private string _sessionId;
+        private LoginDetails _loginDetails;
+
+        private LoginResponse _loginResponse;
 
         private IHttpClient _httpClient;
 
@@ -69,35 +72,56 @@ namespace UltimateTeam.Toolkit.Factories
 
         private Func<IFutRequest<ConsumablesResponse>> _consumablesRequestFactory;
 
-        private Func<IFutRequest<byte>> _reListRequestFactory;
+        private Func<IFutRequest<RelistResponse>> _reListRequestFactory;
+
+        private Func<IFutRequest<ListGiftsResponse>> _giftListRequestFactory;
+
+        private Func<int, IFutRequest<byte>> _giftRequestFactory;
+
+        private Func<long, IFutRequest<DefinitionResponse>> _definitionRequestFactory;
+
+        private Func<IFutRequest<byte>> _removeSoldItemsFromTradepileRequestFactory;
+
+        private Func<IFutRequest<StoreResponse>> _getPackDetailsFactory;
+
+        private Func<PackDetails, IFutRequest<PurchasedPackResponse>> _buyPackFactory;
 
         public FutRequestFactories()
         {
-            _cookieContainer = new CookieContainer();
+            CookieContainer = new CookieContainer();
         }
 
         public FutRequestFactories(CookieContainer cookieContainer)
         {
-            _cookieContainer = cookieContainer;
+            CookieContainer = cookieContainer;
         }
 
-        public string PhishingToken
+        public CookieContainer CookieContainer { get; }
+
+        public LoginDetails LoginDetails
         {
-            get { return _phishingToken; }
+            get { return _loginDetails; }
             set
             {
-                value.ThrowIfInvalidArgument();
-                _phishingToken = value;
+                _loginDetails = value;
             }
         }
 
-        public string SessionId
+        public LoginResponse LoginResponse
         {
-            get { return _sessionId; }
+            get { return _loginResponse; }
             set
             {
-                value.ThrowIfInvalidArgument();
-                _sessionId = value;
+                _loginResponse = value;
+            }
+        }
+
+        public AppVersion AppVersion
+        {
+            get { return _loginDetails.AppVersion; }
+            set
+            {
+                _loginDetails.AppVersion = value;
             }
         }
 
@@ -122,13 +146,29 @@ namespace UltimateTeam.Toolkit.Factories
             {
                 return _loginRequestFactory ?? (_loginRequestFactory = (details, twoFactorCodeProvider) =>
                 {
-                    if (details.Platform == Platform.Xbox360)
+                    _loginDetails = details;
+                    
+                    if (_loginDetails.AppVersion == AppVersion.WebApp)
                     {
-                        _resources.FutHome = Resources.FutHomeXbox360;
+                        _resources = _webResources;
                     }
-                    var loginRequest = new LoginRequest(details, twoFactorCodeProvider) { HttpClient = HttpClient, Resources = _resources };
-                    loginRequest.SetCookieContainer(_cookieContainer);
-                    return loginRequest;
+                    else
+                    {
+                        _resources = _mobileResources;
+                    }
+                    if (details.Platform == Platform.Xbox360 || details.Platform == Platform.XboxOne)
+                    {
+                        Resources xboxResources = new Resources(details.AppVersion);
+
+                        _resources.FutHome = _resources.FutHome.Replace(".s2.", ".s3.");
+                        _resources.ValidateQuestion = _resources.ValidateQuestion.Replace(".s2.", ".s3.");
+                        _resources.ValidateAnswer = _resources.ValidateAnswer.Replace(".s2.", ".s3.");
+                        _resources.Auth = _resources.Auth.Replace(".s2.", ".s3.");
+                        _resources.AccountInfo = _resources.AccountInfo.Replace(".s2.", ".s3.");
+                    }
+                        var loginRequest = new LoginRequest(_loginDetails, twoFactorCodeProvider) { HttpClient = HttpClient, Resources = _resources };
+                        loginRequest.SetCookieContainer(CookieContainer);
+                        return loginRequest;
                 });
             }
             set
@@ -140,9 +180,9 @@ namespace UltimateTeam.Toolkit.Factories
 
         private T SetSharedRequestProperties<T>(T request) where T : FutRequestBase
         {
-            request.PhishingToken = PhishingToken;
-            request.SessionId = SessionId;
-            request.HttpClient = HttpClient;
+            request.LoginResponse = _loginResponse;
+            request.LoginDetails = _loginDetails;
+            request.HttpClient = _httpClient;
             request.Resources = _resources;
 
             return request;
@@ -395,7 +435,7 @@ namespace UltimateTeam.Toolkit.Factories
             get
             {
                 return _squadDetailsRequestFactory ??
-                       (_squadDetailsRequestFactory = squadId => SetSharedRequestProperties(new SquadDetailsRequest(squadId)));
+                       (_squadDetailsRequestFactory = squadId => SetSharedRequestProperties(new SquadDetailsRequest(squadId, _loginResponse.Persona.NucPersId)));
             }
             set
             {
@@ -475,8 +515,21 @@ namespace UltimateTeam.Toolkit.Factories
                 _consumablesRequestFactory = value;
             }
         }
+        public Func<long, IFutRequest<DefinitionResponse>> DefinitionRequestFactory
+        {
+            get
+            {
+                return _definitionRequestFactory ??
+                       (_definitionRequestFactory = baseId => SetSharedRequestProperties(new DefinitionRequest(baseId)));
+            }
+            set
+            {
+                value.ThrowIfNullArgument();
+                _definitionRequestFactory = value;
+            }
+        }
 
-        public Func<IFutRequest<byte>> ReListRequestFactory
+        public Func<IFutRequest<RelistResponse>> ReListRequestFactory
         {
             get
             {
@@ -486,6 +539,72 @@ namespace UltimateTeam.Toolkit.Factories
             {
                 value.ThrowIfNullArgument();
                 _reListRequestFactory = value;
+            }
+        }
+
+        public Func<IFutRequest<ListGiftsResponse>> GiftListRequestFactory
+        {
+            get
+            {
+                return _giftListRequestFactory ??
+                       (_giftListRequestFactory = () => SetSharedRequestProperties(new ListGiftsRequest()));
+            }
+            set
+            {
+                value.ThrowIfNullArgument();
+                _giftListRequestFactory = value;
+            }
+        }
+
+        public Func<int, IFutRequest<byte>> GiftRequestFactory
+        {
+            get { return _giftRequestFactory ?? (_giftRequestFactory = giftId => SetSharedRequestProperties(new GiftRequest(giftId))); }
+            set
+            {
+                value.ThrowIfNullArgument();
+                _giftRequestFactory = value;
+            }
+        }
+
+        public Func<IFutRequest<byte>> RemoveSoldItemsFromTradePileRequestFactory
+        {
+            get
+            {
+                return _removeSoldItemsFromTradepileRequestFactory ??
+                       (_removeSoldItemsFromTradepileRequestFactory = () => SetSharedRequestProperties(new RemoveSoldItemsFromTradePileRequest()));
+            }
+            set
+            {
+                value.ThrowIfNullArgument();
+                _removeSoldItemsFromTradepileRequestFactory = value;
+            }
+        }
+
+        public Func<IFutRequest<StoreResponse>> GetPackDetailsFactory
+        {
+            get
+            {
+                return _getPackDetailsFactory ??
+                       (_getPackDetailsFactory = () => SetSharedRequestProperties(new StoreRequest()));
+            }
+            set
+            {
+                value.ThrowIfNullArgument();
+                _getPackDetailsFactory = value;
+            }
+        }
+
+        public Func<PackDetails, IFutRequest<PurchasedPackResponse>> BuyPackRequestFactory
+        {
+            get
+            {
+                return _buyPackFactory ??
+                       (_buyPackFactory = packDetails => SetSharedRequestProperties(new PackRequest(packDetails)));
+            }
+            set
+            {
+                value.ThrowIfNullArgument();
+                _buyPackFactory = value;
             }
         }
     }

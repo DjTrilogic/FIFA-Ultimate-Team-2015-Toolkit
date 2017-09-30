@@ -1,6 +1,8 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using UltimateTeam.Toolkit.Constants;
+using UltimateTeam.Toolkit.Extensions;
 using UltimateTeam.Toolkit.Models;
 
 namespace UltimateTeam.Toolkit.Requests
@@ -9,13 +11,16 @@ namespace UltimateTeam.Toolkit.Requests
     {
         public async Task<AuctionResponse> PerformRequestAsync()
         {
-            AddMethodOverrideHeader(HttpMethod.Get);
+            var uriString = Resources.FutHome + Resources.TradePile;
+
             AddCommonHeaders();
+            uriString += $"?_={DateTime.Now.ToUnixTime()}";
+
             var tradePileResponseMessage = await HttpClient
-                .GetAsync(string.Format(Resources.FutHome + Resources.TradePile))
+                .GetAsync(string.Format(uriString))
                 .ConfigureAwait(false);
 
-            return await Deserialize<AuctionResponse>(tradePileResponseMessage);
+            return await DeserializeAsync<AuctionResponse>(tradePileResponseMessage);
         }
     }
 }

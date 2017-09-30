@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using UltimateTeam.Toolkit.Constants;
+using UltimateTeam.Toolkit.Extensions;
 using UltimateTeam.Toolkit.Models;
 
 namespace UltimateTeam.Toolkit.Requests
@@ -17,15 +19,16 @@ namespace UltimateTeam.Toolkit.Requests
 
         public async Task<QuickSellResponse> PerformRequestAsync()
         {
-            AddMethodOverrideHeader(HttpMethod.Delete);
+            var uriString = string.Format(Resources.FutHome + Resources.QuickSell, string.Join("%2C", _itemIds));
+            Task<HttpResponseMessage> quickSellResponseTask;
+
             AddCommonHeaders();
+            uriString += $"&_={DateTime.Now.ToUnixTime()}";
+            quickSellResponseTask = HttpClient.DeleteAsync(uriString);
 
-            var pathAndQuery = string.Format(Resources.FutHome + Resources.QuickSell, string.Join("%2C", _itemIds));
-            var quickSellResponse = await HttpClient
-                .PostAsync(pathAndQuery, new StringContent(" "))
-                .ConfigureAwait(false);
+            var quickSellResponse = await quickSellResponseTask.ConfigureAwait(false);
 
-            return await Deserialize<QuickSellResponse>(quickSellResponse);
+            return await DeserializeAsync<QuickSellResponse>(quickSellResponse);
         }
     }
 }

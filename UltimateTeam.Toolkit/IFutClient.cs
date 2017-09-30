@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using UltimateTeam.Toolkit.Factories;
 using UltimateTeam.Toolkit.Models;
 using UltimateTeam.Toolkit.Parameters;
+using UltimateTeam.Toolkit.Services;
 
 namespace UltimateTeam.Toolkit
 {
@@ -66,6 +67,18 @@ namespace UltimateTeam.Toolkit
 
         Task<byte[]> GetNationImageAsync(Item item);
 
-        Task<byte> ReListAsync();
+        Task<RelistResponse> ReListAsync();
+
+        Task<ListGiftsResponse> GetGiftsListAsync();
+
+        Task GetGiftAsync(int idGift);
+
+        Task<DefinitionResponse> GetDefinitionsAsync(long baseId);
+
+        Task RemoveSoldItemsFromTradePileAsync();
+
+        Task<StoreResponse> GetPackDetailsAsync();
+
+        Task<PurchasedPackResponse> BuyPackAsync(PackDetails packDetails);
     }
 }

@@ -15,15 +15,12 @@ namespace UltimateTeam.Toolkit.Requests
 
         public async Task<Item> PerformRequestAsync()
         {
-            AddUserAgent();
-            AddAcceptHeader("*/*");
-            AddReferrerHeader(Resources.BaseShowoff);
-            AddAcceptEncodingHeader();
-            AddAcceptLanguageHeader();
+            AddAnonymousHeader("image/webp,image/apng,image/*,*/*;q=0.8");
+
             var itemResponseMessage = await HttpClient
-                .GetAsync(string.Format(Resources.Item, _baseId))
-                .ConfigureAwait(false);
-            var itemWrapper = await Deserialize<ItemWrapper>(itemResponseMessage);
+                                                .GetAsync(string.Format(Resources.Item, _baseId))
+                                                .ConfigureAwait(false);
+            var itemWrapper = await DeserializeAsync<ItemWrapper>(itemResponseMessage);
 
             return itemWrapper.Item;
         }

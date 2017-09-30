@@ -3,7 +3,10 @@
     public enum Platform
     {
         Ps3,
+        Ps4,
         Xbox360,
-        Pc
+        XboxOne,
+        Pc,
+        Switch
     }
 }
