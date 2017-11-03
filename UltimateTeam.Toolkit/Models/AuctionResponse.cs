@@ -14,6 +14,8 @@ namespace UltimateTeam.Toolkit.Models
 
         public List<DuplicateItem> DuplicateItemIdList { get; set; }
 
+        public object DynamicObjectivesUpdates { get; set; }
+
         // TODO: I have no idea what type/structure this has, only seen null
         public string ErrorState { get; set; }
     }

@@ -58,6 +58,13 @@
 
         public string PasswordSignature { get; set; }
 
+        public string PhoneNumber { get; set; }
+
+        public string Phone { get; set; }
+
+        public string PhoneNumberType { get; set; }
+        public string PhoneNumberStatus { get; set; }
+
 
     }
 }

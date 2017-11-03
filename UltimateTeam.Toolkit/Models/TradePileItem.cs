@@ -7,5 +7,12 @@
         public string Pile { get; set; }
 
         public bool Success { get; set; }
+
+        public string Reason { get; set; }
+
+        public string Error { get; set; }
+
+        public string ErrorCode { get; set; }
+
     }
 }

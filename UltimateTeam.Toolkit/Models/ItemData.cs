@@ -126,5 +126,13 @@ namespace UltimateTeam.Toolkit.Models
         public string FieldPos { get; set; }
 
         public string PosBonus { get; set; }
+
+        public string Reason { get; set; }
+
+        public string Error { get; set; }
+
+        public string ErrorCode { get; set; }
+
+        public object ChantsCount { get; set; }
     }
 }
