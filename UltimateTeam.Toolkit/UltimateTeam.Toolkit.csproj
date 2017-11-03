@@ -69,6 +69,7 @@
     <Compile Include="Exceptions\HttpException.cs" />
     <Compile Include="Exceptions\InvalidCookieException.cs" />
     <Compile Include="Exceptions\InvalidTransactionException.cs" />
+    <Compile Include="Exceptions\LoginFailedException.cs" />
     <Compile Include="Exceptions\PurchasedItemsFullException.cs" />
     <Compile Include="Exceptions\BadRequestException.cs" />
     <Compile Include="Exceptions\ConflictException.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Exceptions\ServiceUnavailableException.cs" />
     <Compile Include="Exceptions\TemporaryBanException.cs" />
     <Compile Include="Exceptions\TransfermarketBlockedException.cs" />
+    <Compile Include="Exceptions\WrongCredentialsException.cs" />
     <Compile Include="Exceptions\WrongPriceRangeException.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\LongExtensions.cs" />
@@ -227,7 +229,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -242,8 +246,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\portable-net45+win8+wp8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -253,7 +257,6 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GitVersionTask.3.6.4\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.3.6.4\build\portable-net+sl+win+wpa+wp\GitVersionTask.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
