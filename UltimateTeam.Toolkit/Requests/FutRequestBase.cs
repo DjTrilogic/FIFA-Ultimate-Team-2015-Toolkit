@@ -1,8 +1,8 @@
+using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using UltimateTeam.Toolkit.Constants;
 using UltimateTeam.Toolkit.Exceptions;
 using UltimateTeam.Toolkit.Extensions;
@@ -274,6 +274,9 @@ namespace UltimateTeam.Toolkit.Requests
                 case FutErrorCode.TransfermarketBlocked:
                     futError.Reason = $"Transfermarket blocked by EA";
                     throw new TransfermarketBlockedException(futError, exception);
+                case FutErrorCode.CaptchaTriggered:
+                    futError.Reason = "Captcha triggered";
+                    throw new CaptchaTriggeredException(futError, exception);
 
                 default:
                     var newException = new FutErrorException(futError, exception);
