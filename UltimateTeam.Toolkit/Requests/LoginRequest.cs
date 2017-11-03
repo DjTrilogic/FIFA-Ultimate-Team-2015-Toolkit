@@ -75,7 +75,7 @@ namespace UltimateTeam.Toolkit.Requests
             }
             catch (Exception e)
             {
-                throw new FutException($"Unable to login to {LoginDetails.AppVersion}", e);
+                throw new LoginFailedException($"Unable to login to {LoginDetails.AppVersion}", e);
             }
         }
 
@@ -139,7 +139,7 @@ namespace UltimateTeam.Toolkit.Requests
             var sended = await SetTwoFactorTypeAsync(loginResponse);
             loginResponse = await LoginForwarder(sended);
 
-            if (contentData.Contains("send you a code to:"))
+            if (contentData.Contains("send you a code to:") || contentData.Contains("Send to my Primary Email"))
             {
                 _authType = AuthenticationType.Email;
             }
@@ -150,12 +150,12 @@ namespace UltimateTeam.Toolkit.Requests
 
             var twoFactorCode = await _twoFactorCodeProvider.GetTwoFactorCodeAsync(_authType);
 
-            if (twoFactorCode.Length != 6)
+            if (twoFactorCode.Length < 6 || twoFactorCode.Length > 8)
             {
-                throw new Exception($"Two Factor Code MUST be 6 digits long {LoginDetails?.AppVersion}.");
+                throw new Exception($"Two Factor Code MUST be 6 to 8 digits long {LoginDetails?.AppVersion}.");
             }
 
-            if (_authType ==AuthenticationType.Unknown)
+            if (_authType == AuthenticationType.Unknown)
             {
                 throw new Exception($"Unable to determine AuthType (i.e. App Authenticator or E-Mail) for {LoginDetails?.AppVersion}.");
             }
@@ -176,7 +176,7 @@ namespace UltimateTeam.Toolkit.Requests
 
             if (codeResponseMessageContent.Contains("Incorrect code entered"))
             {
-                throw new Exception($"Incorrect Two Factor Code entered for {LoginDetails?.AppVersion}.");
+                throw new Exception($"Incorrect Two Factor Code entered ({twoFactorCode}) for {LoginDetails?.AppVersion}.");
             }
 
             return codeResponseMessage;
@@ -237,7 +237,7 @@ namespace UltimateTeam.Toolkit.Requests
             var matchingPersona = new Persona();
             try
             {
-                matchingPersona = LoginResponse.UserAccounts.UserAccountInfo.Personas.First(n => n.UserClubList.First().Platform ==     GetPlatform(LoginDetails.Platform));
+                matchingPersona = LoginResponse.UserAccounts.UserAccountInfo.Personas.First(n => n.UserClubList.First().Platform == GetPlatform(LoginDetails.Platform));
             }
             catch (Exception e)
             {
@@ -317,7 +317,7 @@ namespace UltimateTeam.Toolkit.Requests
 
             if (contentData.Contains("Your credentials are incorrect or have expired") || contentData.Contains("Email address is invalid"))
             {
-                throw new Exception($"Wrong credentials for {LoginDetails?.AppVersion}.");
+                throw new WrongCredentialsException($"Wrong credentials for {LoginDetails?.AppVersion}.");
             }
 
             var forwardedResponse = await LoginForwarder(loginResponseMessage);
