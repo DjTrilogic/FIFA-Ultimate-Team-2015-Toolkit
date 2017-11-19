@@ -41,7 +41,7 @@ namespace UltimateTeam.Toolkit.Models
 
         public bool Dream { get; set; }
 
-        public ushort? DiscardValue { get; set; }
+        public uint? DiscardValue { get; set; }
 
         public int? Value { get; set; }
 
