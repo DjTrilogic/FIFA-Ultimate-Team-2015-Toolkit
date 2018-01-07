@@ -77,5 +77,11 @@ namespace UltimateTeam.Toolkit.Parameters
                         : "&pos=")
                              + Position;
         }
+
+        public override string ToString()
+        {
+            return
+                $"Resource Id: {ResourceId},Min bid: {MinBid}, Max bid: {MaxBid}, Min Buy: {MinBuy}, Max Buy: {MaxBuy}, Page Size:{PageSize}";
+        }
     }
 }
