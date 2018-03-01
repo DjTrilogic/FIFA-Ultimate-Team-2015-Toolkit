@@ -24,7 +24,9 @@ namespace UltimateTeam.Toolkit.Factories
 
         private IHttpClient _httpClient;
 
-        private Func<LoginDetails, ITwoFactorCodeProvider, IFutRequest<LoginResponse>> _loginRequestFactory;
+        private Func<LoginDetails, ITwoFactorCodeProvider, LoginPriority, IFutRequest<LoginResponse>> _loginRequestFactory;
+
+        private Func<IFutRequest<bool>> _logoutRequestFactory;
 
         private Func<SearchParameters, IFutRequest<AuctionResponse>> _searchRequestFactory;
 
@@ -140,14 +142,14 @@ namespace UltimateTeam.Toolkit.Factories
             }
         }
 
-        public Func<LoginDetails, ITwoFactorCodeProvider, IFutRequest<LoginResponse>> LoginRequestFactory
+        public Func<LoginDetails, ITwoFactorCodeProvider, LoginPriority, IFutRequest<LoginResponse>> LoginRequestFactory
         {
             get
             {
-                return _loginRequestFactory ?? (_loginRequestFactory = (details, twoFactorCodeProvider) =>
+                return _loginRequestFactory ?? (_loginRequestFactory = (details, twoFactorCodeProvider, loginPriority) =>
                 {
                     _loginDetails = details;
-                    
+
                     if (_loginDetails.AppVersion == AppVersion.WebApp)
                     {
                         _resources = _webResources;
@@ -166,15 +168,28 @@ namespace UltimateTeam.Toolkit.Factories
                         _resources.Auth = _resources.Auth.Replace(".s2.", ".s3.");
                         _resources.AccountInfo = _resources.AccountInfo.Replace(".s2.", ".s3.");
                     }
-                        var loginRequest = new LoginRequest(_loginDetails, twoFactorCodeProvider) { HttpClient = HttpClient, Resources = _resources };
-                        loginRequest.SetCookieContainer(CookieContainer);
-                        return loginRequest;
+                    var loginRequest = new LoginRequest(_loginDetails, twoFactorCodeProvider, loginPriority) { HttpClient = HttpClient, Resources = _resources };
+                    loginRequest.SetCookieContainer(CookieContainer);
+                    return loginRequest;
                 });
             }
             set
             {
                 value.ThrowIfNullArgument();
                 _loginRequestFactory = value;
+            }
+        }
+
+        public Func<IFutRequest<bool>> LogoutRequestFactory
+        {
+            get
+            {
+                return _logoutRequestFactory ?? (_logoutRequestFactory = () => SetSharedRequestProperties(new LogoutRequest()));
+            }
+            set
+            {
+                value.ThrowIfNullArgument();
+                _logoutRequestFactory = value;
             }
         }
 

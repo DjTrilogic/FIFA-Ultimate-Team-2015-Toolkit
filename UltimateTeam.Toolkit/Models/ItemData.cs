@@ -134,5 +134,7 @@ namespace UltimateTeam.Toolkit.Models
         public string ErrorCode { get; set; }
 
         public object ChantsCount { get; set; }
+
+        public object Attribute { get; set; }
     }
 }

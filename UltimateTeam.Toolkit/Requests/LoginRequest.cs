@@ -17,6 +17,7 @@ namespace UltimateTeam.Toolkit.Requests
         private IHasher _hasher;
         private ITwoFactorCodeProvider _twoFactorCodeProvider;
         private AuthenticationType _authType;
+        private LoginPriority _loginPriority;
 
         public IHasher Hasher
         {
@@ -36,13 +37,20 @@ namespace UltimateTeam.Toolkit.Requests
             set { _twoFactorCodeProvider = value; }
         }
 
-        public LoginRequest(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider)
+        public LoginPriority LoginPriority
+        {
+            get { return _loginPriority; }
+            set { _loginPriority = value; }
+        }
+
+        public LoginRequest(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider, LoginPriority _loginPriority)
         {
             if (loginDetails.Username == null || loginDetails.Password == null)
             {
                 throw new FutException($"No Username or Password provided for {LoginDetails?.AppVersion}.");
             }
             LoginDetails = loginDetails;
+            LoginPriority = _loginPriority;
             TwoFactorCodeProvider = twoFactorCodeProvider;
         }
 
@@ -274,12 +282,12 @@ namespace UltimateTeam.Toolkit.Requests
         {
             string httpContent;
             var authResponseMessage = new HttpResponseMessage();
-
+            var loginPriority = LoginPriority == LoginPriority.Low ? "4" : "5";
             AddLoginHeaders();
             HttpClient.AddRequestHeader(NonStandardHttpHeaders.SessionId, string.Empty);
             HttpClient.AddRequestHeader(NonStandardHttpHeaders.PowSessionId, string.Empty);
             HttpClient.AddRequestHeader(NonStandardHttpHeaders.Origin, @"file://");
-            httpContent = $@"{{""isReadOnly"":false,""sku"":""{Resources.Sku}"",""clientVersion"":{Resources.ClientVersion},""locale"":""en-US"",""method"":""authcode"",""priorityLevel"":4,""identification"":{{""authCode"":""{LoginResponse.AuthCode.Code}"",""redirectUrl"":""nucleus:rest""}},""nucleusPersonaId"":""{LoginResponse.Persona.NucPersId}"",""gameSku"":""{GetGameSku(LoginDetails.Platform)}""}}";
+            httpContent = $@"{{""isReadOnly"":false,""sku"":""{Resources.Sku}"",""clientVersion"":{Resources.ClientVersion},""locale"":""en-US"",""method"":""authcode"",""priorityLevel"":{loginPriority},""identification"":{{""authCode"":""{LoginResponse.AuthCode.Code}"",""redirectUrl"":""nucleus:rest""}},""nucleusPersonaId"":""{LoginResponse.Persona.NucPersId}"",""gameSku"":""{GetGameSku(LoginDetails.Platform)}""}}";
             authResponseMessage = await HttpClient.PostAsync(string.Format(String.Format(Resources.Auth, DateTime.Now.ToUnixTime()), DateTime.Now.ToUnixTime()), new StringContent(httpContent));
 
             var authResponse = await DeserializeAsync<Auth>(authResponseMessage);

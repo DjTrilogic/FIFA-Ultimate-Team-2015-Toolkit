@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using UltimateTeam.Toolkit.Constants;
 using UltimateTeam.Toolkit.Factories;
 using UltimateTeam.Toolkit.Models;
 using UltimateTeam.Toolkit.Parameters;
@@ -11,7 +12,9 @@ namespace UltimateTeam.Toolkit
     {
         FutRequestFactories RequestFactories { get; }
 
-        Task<LoginResponse> LoginAsync(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider);
+        Task<LoginResponse> LoginAsync(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider, LoginPriority loginPriority = LoginPriority.Low);
+
+        Task LogoutAsync();
 
         Task<AuctionResponse> SearchAsync(SearchParameters searchParameters);
 

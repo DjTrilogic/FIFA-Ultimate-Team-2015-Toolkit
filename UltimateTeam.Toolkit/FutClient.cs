@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using UltimateTeam.Toolkit.Constants;
 using UltimateTeam.Toolkit.Extensions;
 using UltimateTeam.Toolkit.Factories;
 using UltimateTeam.Toolkit.Models;
@@ -25,15 +26,21 @@ namespace UltimateTeam.Toolkit
             RequestFactories = new FutRequestFactories(cookieContainer);
         }
 
-        public async Task<LoginResponse> LoginAsync(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider)
+        public async Task<LoginResponse> LoginAsync(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider, LoginPriority loginPriority = LoginPriority.Low)
         {
             loginDetails.ThrowIfNullArgument();
 
-            var loginRequest = RequestFactories.LoginRequestFactory(loginDetails, twoFactorCodeProvider);
+            var loginRequest = RequestFactories.LoginRequestFactory(loginDetails, twoFactorCodeProvider, loginPriority);
             RequestFactories.LoginResponse = await loginRequest.PerformRequestAsync();
             RequestFactories.LoginDetails = loginDetails;
 
             return RequestFactories.LoginResponse;
+        }
+
+        public Task LogoutAsync()
+        {
+            var logoutRequest = RequestFactories.LogoutRequestFactory();
+            return logoutRequest.PerformRequestAsync();
         }
 
         public Task<AuctionResponse> SearchAsync(SearchParameters searchParameters)
