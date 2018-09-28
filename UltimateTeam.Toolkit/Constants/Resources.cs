@@ -4,9 +4,9 @@ namespace UltimateTeam.Toolkit.Constants
 {
     internal class Resources
     {
-        private const int CurrentYearShort = 18;
+        private const int CurrentYearShort = 19;
 
-        private const int CurrentYearLong = 2018;
+        private const int CurrentYearLong = 2019;
 
         private const int PreviousYearShort = CurrentYearShort - 1;
 
@@ -105,7 +105,7 @@ namespace UltimateTeam.Toolkit.Constants
 
             ValidateAnswer = $"https://utas.external.s2.fut.ea.com/ut/game/fifa{CurrentYearShort}/phishing/validate?answer=" + "{0}";
 
-            Auth = "https://utas.external.s2.fut.ea.com/ut/auth?" + "{0}";
+            Auth = "https://utas.external.s2.fut.ea.com/ut/auth?sku_b=FFT19&" + "{0}";
 
             Shards = "https://utas.mob.v4.fut.ea.com/ut/shards/v2?_=" + "{0}";
 
@@ -147,7 +147,7 @@ namespace UltimateTeam.Toolkit.Constants
 
                     ClientVersion = 21;
 
-  
+
                     Home = $"https://accounts.ea.com/connect/auth?client_id={Client}&response_type=token&display=web2/login&locale=en_GB&redirect_uri=nucleus:rest&prompt=none&scope=basic.identity+offline+signin";
 
                     Logout = $"https://accounts.ea.com/connect/logout?client_id={Client}&redirect_uri=nucleus:rest";

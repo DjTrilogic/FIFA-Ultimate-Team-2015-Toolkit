@@ -14,6 +14,8 @@ namespace UltimateTeam.Toolkit.Models
 
         public string NucUserId { get; set; }
 
+        public string Dob { get; set; }
+
         public List<UserDataInfoSettings> Settings { get; set; }
 
         public string Sku { get; set; }

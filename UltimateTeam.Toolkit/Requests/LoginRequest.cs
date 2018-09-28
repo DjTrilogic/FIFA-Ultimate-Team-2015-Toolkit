@@ -64,6 +64,7 @@ namespace UltimateTeam.Toolkit.Requests
                 var pidData = await GetPidDataAsync(accessToken);
 
                 LoginResponse.Persona.NucUserId = pidData.Pid.ExternalRefValue;
+                LoginResponse.Persona.Dob = pidData.Pid.Dob;
 
                 var sessionCode = await GetAuthCodeAsync(accessToken);
                 LoginResponse.AuthCode = await GetAuthCodeAsync(accessToken);
@@ -261,13 +262,20 @@ namespace UltimateTeam.Toolkit.Requests
 
             HttpClient.AddRequestHeader(NonStandardHttpHeaders.SessionId, LoginResponse.AuthData.Sid);
             var validateResponseMessage = await HttpClient.GetAsync(String.Format(Resources.ValidateQuestion, DateTime.Now.ToUnixTime()));
+            var validateResponseMessageContent = await validateResponseMessage.Content.ReadAsStringAsync();
+            if (validateResponseMessageContent.Contains("Already answered question") ||
+                validateResponseMessageContent.Contains("Feature Disabled"))
+            {
+                return null;
+            }
+
             validateResponseMessage = await HttpClient.PostAsync(String.Format(Resources.ValidateAnswer, Hasher.Hash(loginDetails.SecretAnswer)), new FormUrlEncodedContent(
                   new[]
                   {
                     new KeyValuePair<string, string>("answer", Hasher.Hash(loginDetails.SecretAnswer))
                   }));
             var phishingToken = await DeserializeAsync<PhishingToken>(validateResponseMessage);
-            var validateResponseMessageContent = await validateResponseMessage.Content.ReadAsStringAsync();
+            validateResponseMessageContent = await validateResponseMessage.Content.ReadAsStringAsync();
 
             if (phishingToken.Code != "200" || phishingToken.Token == null)
             {

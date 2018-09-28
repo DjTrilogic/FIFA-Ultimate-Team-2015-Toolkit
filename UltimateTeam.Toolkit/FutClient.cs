@@ -31,8 +31,12 @@ namespace UltimateTeam.Toolkit
             loginDetails.ThrowIfNullArgument();
 
             var loginRequest = RequestFactories.LoginRequestFactory(loginDetails, twoFactorCodeProvider, loginPriority);
-            RequestFactories.LoginResponse = await loginRequest.PerformRequestAsync();
+            var loginResponse = await loginRequest.PerformRequestAsync();
+            RequestFactories.LoginResponse = loginResponse;
             RequestFactories.LoginDetails = loginDetails;
+            var pinEventsHandler = new PinEventsHandler(loginResponse, RequestFactories.HttpClient);
+            //await pinEventsHandler.Initialize();
+            RequestFactories.PinEventsHandler = pinEventsHandler;
 
             return RequestFactories.LoginResponse;
         }

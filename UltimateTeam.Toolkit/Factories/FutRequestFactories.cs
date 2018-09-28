@@ -87,6 +87,7 @@ namespace UltimateTeam.Toolkit.Factories
         private Func<IFutRequest<StoreResponse>> _getPackDetailsFactory;
 
         private Func<PackDetails, IFutRequest<PurchasedPackResponse>> _buyPackFactory;
+        private PinEventsHandler _pinEventsHandler;
 
         public FutRequestFactories()
         {
@@ -116,6 +117,12 @@ namespace UltimateTeam.Toolkit.Factories
             {
                 _loginResponse = value;
             }
+        }
+
+        public PinEventsHandler PinEventsHandler
+        {
+            get => _pinEventsHandler;
+            set => _pinEventsHandler = value;
         }
 
         public AppVersion AppVersion
