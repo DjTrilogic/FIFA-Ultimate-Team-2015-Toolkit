@@ -14,6 +14,6 @@
 
         public const string PowSessionId = "X-POW-SID";
 
-        public const string Origin = "https://www.easports.com";
+        public const string Origin = "Origin";
     }
 }

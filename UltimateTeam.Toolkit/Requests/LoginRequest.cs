@@ -66,16 +66,18 @@ namespace UltimateTeam.Toolkit.Requests
                 LoginResponse.Persona.NucUserId = pidData.Pid.ExternalRefValue;
                 LoginResponse.Persona.Dob = pidData.Pid.Dob;
 
-                var sessionCode = await GetAuthCodeAsync(accessToken);
-                LoginResponse.AuthCode = await GetAuthCodeAsync(accessToken);
 
                 LoginResponse.Shards = await GetShardsAsync();
                 LoginResponse.UserAccounts = await GetUserAccountsAsync(LoginDetails);
 
                 var matchingPersona = MatchPersona(LoginResponse.UserAccounts);
+                ValidatePersona(matchingPersona);
+
 
                 LoginResponse.Persona.NucPersId = matchingPersona.PersonaId;
                 LoginResponse.Persona.DisplayName = matchingPersona.PersonaName;
+
+                LoginResponse.AuthCode = await GetAuthCodeAsync(accessToken);
 
                 LoginResponse.AuthData = await AuthAsync();
                 LoginResponse.PhishingToken = await ValidateAsync(LoginDetails);
@@ -85,6 +87,14 @@ namespace UltimateTeam.Toolkit.Requests
             catch (Exception e)
             {
                 throw new LoginFailedException($"Unable to login to {LoginDetails.AppVersion}", e);
+            }
+        }
+
+        private void ValidatePersona(Persona matchingPersona)
+        {
+            if (matchingPersona.UserState == "RETURNING_USER_EXPIRED")
+            {
+                throw new LoginFailedException("Appears your Early Access has expired.");
             }
         }
 
@@ -102,7 +112,7 @@ namespace UltimateTeam.Toolkit.Requests
 
         private async Task<AuthCode> GetAuthCodeAsync(string accessToken)
         {
-            AddLoginHeaders();
+            AddLoginHeaders(true);
             var authCodeResponseMessage = await HttpClient.GetAsync(string.Format(Resources.AuthCode, accessToken));
             var authCode = await DeserializeAsync<AuthCode>(authCodeResponseMessage);
 
@@ -123,6 +133,7 @@ namespace UltimateTeam.Toolkit.Requests
                                                                                                                             new[]
                                                                                                                             {
                                                                                                                             new KeyValuePair<string, string>("_eventId", "submit"),
+                                                                                                                                new KeyValuePair<string, string>("codeType", "EMAIL"),
                                                                                                                             }));
             }
             else
@@ -145,9 +156,6 @@ namespace UltimateTeam.Toolkit.Requests
             contentData = await loginResponse.Content.ReadAsStringAsync();
 
             _authType = AuthenticationType.Unknown;
-            var sended = await SetTwoFactorTypeAsync(loginResponse);
-            loginResponse = await LoginForwarder(sended);
-
             if (contentData.Contains("send you a code to:") || contentData.Contains("Send to my Primary Email"))
             {
                 _authType = AuthenticationType.Email;
@@ -156,6 +164,10 @@ namespace UltimateTeam.Toolkit.Requests
             {
                 _authType = AuthenticationType.App;
             }
+
+            var sended = await SetTwoFactorTypeAsync(loginResponse);
+            loginResponse = await LoginForwarder(sended);
+
 
             var twoFactorCode = await _twoFactorCodeProvider.GetTwoFactorCodeAsync(_authType);
 
@@ -197,10 +209,11 @@ namespace UltimateTeam.Toolkit.Requests
             var contentData = await responseMessage.Content.ReadAsStringAsync();
             if (contentData.Contains("https://signin.ea.com:443/p/web2/login?execution="))
             {
-                Match executionIdMatch = Regex.Match(contentData, @"https:\/\/signin\.ea\.com:443\/p\/web2\/login\?execution=([A-Za-z0-9\-]+)");
+                Match executionIdMatch = Regex.Match(contentData, @"'https:\/\/signin\.ea\.com:443\/p\/web2\/login\?execution=([A-Za-z0-9\-]+)&initref=(.*)';");
 
                 string executionId = executionIdMatch.Groups[1].Value;
-                forwardResponseMessage = await HttpClient.GetAsync("https://signin.ea.com:443/p/web2/login?execution=" + executionId + "&_eventId=end");
+                string initref = executionIdMatch.Groups[2].Value;
+                forwardResponseMessage = await HttpClient.GetAsync($"https://signin.ea.com:443/p/web2/login?execution={executionId}&initref={initref}&_eventId=end");
 
                 return forwardResponseMessage;
             }
@@ -211,7 +224,7 @@ namespace UltimateTeam.Toolkit.Requests
         {
             AddLoginHeaders();
             HttpClient.AddRequestHeader(NonStandardHttpHeaders.NucleusId, LoginResponse.Persona.NucUserId);
-            HttpClient.AddRequestHeader(NonStandardHttpHeaders.PowSessionId, LoginResponse.POWSessionId);
+            //HttpClient.AddRequestHeader(NonStandardHttpHeaders.PowSessionId, LoginResponse.POWSessionId);
 
             var shardsResponseMessage = await HttpClient.GetAsync(string.Format(Resources.Shards, DateTime.Now.ToUnixTime()));
             var shardsResponseContent = await shardsResponseMessage.Content.ReadAsStringAsync();
@@ -291,12 +304,12 @@ namespace UltimateTeam.Toolkit.Requests
             string httpContent;
             var authResponseMessage = new HttpResponseMessage();
             var loginPriority = LoginPriority == LoginPriority.Low ? "4" : "5";
-            AddLoginHeaders();
-            HttpClient.AddRequestHeader(NonStandardHttpHeaders.SessionId, string.Empty);
-            HttpClient.AddRequestHeader(NonStandardHttpHeaders.PowSessionId, string.Empty);
-            HttpClient.AddRequestHeader(NonStandardHttpHeaders.Origin, @"file://");
+            AddLoginHeaders(true);
+            //HttpClient.AddRequestHeader(NonStandardHttpHeaders.SessionId, string.Empty);
+            //HttpClient.AddRequestHeader(NonStandardHttpHeaders.PowSessionId, string.Empty);
+            //HttpClient.AddRequestHeader(NonStandardHttpHeaders.Origin, @"https://www.easports.com");
             httpContent = $@"{{""isReadOnly"":false,""sku"":""{Resources.Sku}"",""clientVersion"":{Resources.ClientVersion},""locale"":""en-US"",""method"":""authcode"",""priorityLevel"":{loginPriority},""identification"":{{""authCode"":""{LoginResponse.AuthCode.Code}"",""redirectUrl"":""nucleus:rest""}},""nucleusPersonaId"":""{LoginResponse.Persona.NucPersId}"",""gameSku"":""{GetGameSku(LoginDetails.Platform)}""}}";
-            authResponseMessage = await HttpClient.PostAsync(string.Format(String.Format(Resources.Auth, DateTime.Now.ToUnixTime()), DateTime.Now.ToUnixTime()), new StringContent(httpContent));
+            authResponseMessage = await HttpClient.PostAsync(Resources.Auth, new StringContent(httpContent));
 
             var authResponse = await DeserializeAsync<Auth>(authResponseMessage);
             var authResponseContent = await authResponseMessage.Content.ReadAsStringAsync();

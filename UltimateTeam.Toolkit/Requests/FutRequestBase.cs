@@ -88,15 +88,19 @@ namespace UltimateTeam.Toolkit.Requests
             HttpClient.AddConnectionKeepAliveHeader();
         }
 
-        protected void AddLoginHeaders()
+        protected void AddLoginHeaders(bool addOrigin = false)
         {
             HttpClient.ClearRequestHeaders();
-            HttpClient.AddConnectionKeepAliveHeader();
+            //HttpClient.AddConnectionKeepAliveHeader();
             AddAcceptHeader("*/*");
             HttpClient.AddRequestHeader(HttpHeaders.ContentType, "application/json");
             AddAcceptEncodingHeader();
             AddAcceptLanguageHeader();
             AddUserAgent();
+            if (addOrigin)
+            {
+                HttpClient.AddRequestHeader(NonStandardHttpHeaders.Origin, @"https://www.easports.com");
+            }
         }
 
         protected void AddContentHeader(string contentType)

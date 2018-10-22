@@ -105,13 +105,13 @@ namespace UltimateTeam.Toolkit.Constants
 
             ValidateAnswer = $"https://utas.external.s2.fut.ea.com/ut/game/fifa{CurrentYearShort}/phishing/validate?answer=" + "{0}";
 
-            Auth = "https://utas.external.s2.fut.ea.com/ut/auth?sku_b=FFT19&" + "{0}";
+            Auth = "https://utas.external.s2.fut.ea.com/ut/auth";
 
             Shards = "https://utas.mob.v4.fut.ea.com/ut/shards/v2?_=" + "{0}";
 
             AccountInfo = $"https://utas.external.s2.fut.ea.com/ut/game/fifa{CurrentYearShort}/user/accountinfo?filterConsoleLogin=true&sku={Sku}&returningUserGameYear={PreviousYearLong}&_=" + "{0}";
 
-            AuthCode = "https://accounts.ea.com/connect/auth?client_id=FOS-SERVER&redirect_uri=nucleus:rest&response_type=code&access_token=" + "{0}";
+            AuthCode = "https://accounts.ea.com/connect/auth?client_id=FOS-SERVER&redirect_uri=nucleus:rest&response_type=code&release_type=prod&access_token=" + "{0}";
 
             Token = "https://accounts.ea.com/connect/token";
 
@@ -134,7 +134,7 @@ namespace UltimateTeam.Toolkit.Constants
 
                     ClientVersion = 1;
 
-                    Home = $"https://accounts.ea.com/connect/auth?prompt=login&accessToken=null&client_id={Client}&response_type=token&display=web2/login&locale=en_GB&redirect_uri=https://www.easports.com/de/fifa/ultimate-team/web-app/auth.html&scope=basic.identity+offline+signin";
+                    Home = $"https://accounts.ea.com/connect/auth?prompt=login&accessToken=null&client_id={Client}&response_type=token&display=web2/login&locale=en_GB&redirect_uri=https://www.easports.com/de/fifa/ultimate-team/web-app/auth.html&release_type=prod&scope=basic.identity+offline+signin";
 
                     Logout = $"https://accounts.ea.com/connect/logout?client_id={Client}&redirect_uri=nucleus:rest";
 
@@ -148,7 +148,7 @@ namespace UltimateTeam.Toolkit.Constants
                     ClientVersion = 21;
 
 
-                    Home = $"https://accounts.ea.com/connect/auth?client_id={Client}&response_type=token&display=web2/login&locale=en_GB&redirect_uri=nucleus:rest&prompt=none&scope=basic.identity+offline+signin";
+                    Home = $"https://accounts.ea.com/connect/auth?client_id={Client}&response_type=token&display=web2/login&locale=en_GB&redirect_uri=nucleus:rest&prompt=none&release_type=prod&scope=basic.identity+offline+signin";
 
                     Logout = $"https://accounts.ea.com/connect/logout?client_id={Client}&redirect_uri=nucleus:rest";
 
