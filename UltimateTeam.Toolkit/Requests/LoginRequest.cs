@@ -94,7 +94,7 @@ namespace UltimateTeam.Toolkit.Requests
         {
             if (matchingPersona.UserState == "RETURNING_USER_EXPIRED")
             {
-                throw new LoginFailedException("Appears your Early Access has expired.");
+                //throw new LoginFailedException("Appears your Early Access has expired.");
             }
         }
 
