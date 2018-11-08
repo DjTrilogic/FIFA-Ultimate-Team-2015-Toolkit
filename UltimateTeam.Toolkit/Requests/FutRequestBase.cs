@@ -148,6 +148,18 @@ namespace UltimateTeam.Toolkit.Requests
             HttpClient.MessageHandler.CookieContainer = cookieContainer;
         }
 
+        /// <summary>
+        /// Set proxy in that format : new WebProxy("192.168.1.1",7990)
+        /// </summary>
+        /// <param name="webProxy"></param>
+        public void SetProxy(IWebProxy webProxy)
+        {
+            if (webProxy == null)
+                return;
+            HttpClient.MessageHandler.Proxy = webProxy;
+            HttpClient.MessageHandler.UseProxy = true;
+        }
+
         protected static async Task<T> DeserializeAsync<T>(HttpResponseMessage message) where T : class
         {
             message.EnsureSuccessStatusCode();

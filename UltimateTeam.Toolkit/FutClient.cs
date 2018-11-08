@@ -26,6 +26,11 @@ namespace UltimateTeam.Toolkit
             RequestFactories = new FutRequestFactories(cookieContainer);
         }
 
+        public FutClient(CookieContainer cookie, IWebProxy proxy = null)
+        {
+            RequestFactories = new FutRequestFactories(cookie, proxy);
+        }
+
         public async Task<LoginResponse> LoginAsync(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider, LoginPriority loginPriority = LoginPriority.Low)
         {
             loginDetails.ThrowIfNullArgument();

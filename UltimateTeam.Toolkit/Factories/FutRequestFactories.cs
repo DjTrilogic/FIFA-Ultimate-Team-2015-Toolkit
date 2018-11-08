@@ -12,6 +12,8 @@ namespace UltimateTeam.Toolkit.Factories
 {
     public class FutRequestFactories
     {
+        private readonly IWebProxy WebProxy;
+
         private readonly Resources _webResources = new Resources(AppVersion.WebApp);
 
         private readonly Resources _mobileResources = new Resources(AppVersion.CompanionApp);
@@ -99,6 +101,12 @@ namespace UltimateTeam.Toolkit.Factories
             CookieContainer = cookieContainer;
         }
 
+        public FutRequestFactories(CookieContainer cookieContainer, IWebProxy webProxy = null)
+        {
+            CookieContainer = cookieContainer;
+            WebProxy = webProxy;
+        }
+
         public CookieContainer CookieContainer { get; }
 
         public LoginDetails LoginDetails
@@ -177,6 +185,7 @@ namespace UltimateTeam.Toolkit.Factories
                     }
                     var loginRequest = new LoginRequest(_loginDetails, twoFactorCodeProvider, loginPriority) { HttpClient = HttpClient, Resources = _resources };
                     loginRequest.SetCookieContainer(CookieContainer);
+                    loginRequest.SetProxy(WebProxy);
                     return loginRequest;
                 });
             }
