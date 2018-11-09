@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace UltimateTeam.Toolkit.Requests
 {
@@ -12,7 +11,7 @@ namespace UltimateTeam.Toolkit.Requests
             {
                 var response = await HttpClient.DeleteAsync(uriString);
             }
-            catch (Exception e)
+            catch
             {
 
             }

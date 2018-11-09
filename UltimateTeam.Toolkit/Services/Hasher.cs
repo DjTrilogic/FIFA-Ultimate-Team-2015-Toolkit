@@ -157,7 +157,9 @@ namespace UltimateTeam.Toolkit.Services
         {
             var unsigned = (uint)x;
 
+#pragma warning disable CS0675 // Bitwise-or operator used on a sign-extended operand
             return (int)((x << c) | (unsigned >> (32 - c)));
+#pragma warning restore CS0675 // Bitwise-or operator used on a sign-extended operand
         }
 
         private static int[] ChunkInput(string input)
