@@ -19,7 +19,7 @@ namespace UltimateTeam.Toolkit.Models
         {
             username.ThrowIfInvalidArgument();
             password.ThrowIfInvalidArgument();
-            secretAnswer.ThrowIfInvalidArgument();
+            //secretAnswer.ThrowIfInvalidArgument();
             Username = username;
             Password = password;
             SecretAnswer = secretAnswer;
