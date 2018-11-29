@@ -26,7 +26,7 @@ namespace UltimateTeam.Toolkit.Factories
 
         private IHttpClient _httpClient;
 
-        private Func<LoginDetails, ITwoFactorCodeProvider, LoginPriority, IFutRequest<LoginResponse>> _loginRequestFactory;
+        private Func<LoginDetails, ITwoFactorCodeProvider, LoginPriority, ICaptchaSolver, IFutRequest<LoginResponse>> _loginRequestFactory;
 
         private Func<IFutRequest<bool>> _logoutRequestFactory;
 
@@ -157,11 +157,11 @@ namespace UltimateTeam.Toolkit.Factories
             }
         }
 
-        public Func<LoginDetails, ITwoFactorCodeProvider, LoginPriority, IFutRequest<LoginResponse>> LoginRequestFactory
+        public Func<LoginDetails, ITwoFactorCodeProvider, LoginPriority, ICaptchaSolver, IFutRequest<LoginResponse>> LoginRequestFactory
         {
             get
             {
-                return _loginRequestFactory ?? (_loginRequestFactory = (details, twoFactorCodeProvider, loginPriority) =>
+                return _loginRequestFactory ?? (_loginRequestFactory = (details, twoFactorCodeProvider, loginPriority, captchaSolver) =>
                 {
                     _loginDetails = details;
 
@@ -183,7 +183,7 @@ namespace UltimateTeam.Toolkit.Factories
                         _resources.Auth = _resources.Auth.Replace(".s2.", ".s3.");
                         _resources.AccountInfo = _resources.AccountInfo.Replace(".s2.", ".s3.");
                     }
-                    var loginRequest = new LoginRequest(_loginDetails, twoFactorCodeProvider, loginPriority) { HttpClient = HttpClient, Resources = _resources };
+                    var loginRequest = new LoginRequest(_loginDetails, twoFactorCodeProvider, loginPriority) { HttpClient = HttpClient, Resources = _resources, CaptchaSolver = captchaSolver };
                     loginRequest.SetCookieContainer(CookieContainer);
                     loginRequest.SetProxy(WebProxy);
                     return loginRequest;

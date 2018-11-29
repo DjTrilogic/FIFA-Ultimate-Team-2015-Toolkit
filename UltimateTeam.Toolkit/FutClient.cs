@@ -31,11 +31,11 @@ namespace UltimateTeam.Toolkit
             RequestFactories = new FutRequestFactories(cookie, proxy);
         }
 
-        public async Task<LoginResponse> LoginAsync(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider, LoginPriority loginPriority = LoginPriority.Low)
+        public async Task<LoginResponse> LoginAsync(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider, LoginPriority loginPriority = LoginPriority.Low, ICaptchaSolver captchaSolver = null)
         {
             loginDetails.ThrowIfNullArgument();
 
-            var loginRequest = RequestFactories.LoginRequestFactory(loginDetails, twoFactorCodeProvider, loginPriority);
+            var loginRequest = RequestFactories.LoginRequestFactory(loginDetails, twoFactorCodeProvider, loginPriority, captchaSolver);
             var loginResponse = await loginRequest.PerformRequestAsync();
             RequestFactories.LoginResponse = loginResponse;
             RequestFactories.LoginDetails = loginDetails;

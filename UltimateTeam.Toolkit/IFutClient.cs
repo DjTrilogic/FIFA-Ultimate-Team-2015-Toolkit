@@ -12,7 +12,7 @@ namespace UltimateTeam.Toolkit
     {
         FutRequestFactories RequestFactories { get; }
 
-        Task<LoginResponse> LoginAsync(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider, LoginPriority loginPriority = LoginPriority.Low);
+        Task<LoginResponse> LoginAsync(LoginDetails loginDetails, ITwoFactorCodeProvider twoFactorCodeProvider, LoginPriority loginPriority = LoginPriority.Low, ICaptchaSolver captchaSolver = null);
 
         Task LogoutAsync();
 

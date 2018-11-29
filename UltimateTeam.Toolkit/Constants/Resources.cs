@@ -44,6 +44,9 @@ namespace UltimateTeam.Toolkit.Constants
 
         public string Pid;
 
+
+        public const string FunCaptchaValidate = "captcha/fun/validate";
+
         public const string Store = "store/purchaseGroup/cardpack?ppInfo=true";
 
         public const string MyClub = "club?level=10";

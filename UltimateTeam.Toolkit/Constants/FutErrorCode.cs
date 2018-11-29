@@ -8,7 +8,7 @@
         Conflict = 409,
         UpgradeRequired = 426,
         TooManyRequests = 429,
-        CaptchaTriggered = 459,
+        CaptchaTriggered = 458,
         BadRequest = 460,
         PermissionDenied = 461,
         NotEnoughCredit = 470,

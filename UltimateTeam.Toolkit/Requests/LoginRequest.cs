@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,8 @@ namespace UltimateTeam.Toolkit.Requests
             get { return _twoFactorCodeProvider; }
             set { _twoFactorCodeProvider = value; }
         }
+
+        public ICaptchaSolver CaptchaSolver { get; set; }
 
         public LoginPriority LoginPriority
         {
@@ -275,7 +278,14 @@ namespace UltimateTeam.Toolkit.Requests
 
             HttpClient.AddRequestHeader(NonStandardHttpHeaders.SessionId, LoginResponse.AuthData.Sid);
             var validateResponseMessage = await HttpClient.GetAsync(String.Format(Resources.ValidateQuestion, DateTime.Now.ToUnixTime()));
+
             var validateResponseMessageContent = await validateResponseMessage.Content.ReadAsStringAsync();
+            if (validateResponseMessageContent.Contains("Fun Captcha Triggered"))
+            {
+                await SolveCaptcha();
+                validateResponseMessage = await HttpClient.GetAsync(String.Format(Resources.ValidateQuestion, DateTime.Now.ToUnixTime()));
+                validateResponseMessageContent = await validateResponseMessage.Content.ReadAsStringAsync();
+            }
             if (validateResponseMessageContent.Contains("Already answered question") ||
                 validateResponseMessageContent.Contains("Feature Disabled"))
             {
@@ -297,6 +307,24 @@ namespace UltimateTeam.Toolkit.Requests
 
             return phishingToken;
 
+        }
+
+        protected async Task SolveCaptcha()
+        {
+            if (CaptchaSolver == null)
+            {
+                throw new UnhandledCaptchaException($"Captcha triggered but captcha solver was disabled/undefined");
+            }
+
+            if (!CaptchaSolver.IsEnabled)
+            {
+                throw new UnhandledCaptchaException($"Captcha triggered but the captcha solver is disabled");
+            }
+
+            var token = CaptchaSolver.UseSameProxy ? await CaptchaSolver.Solve(HttpClient.MessageHandler.Proxy) : await CaptchaSolver.Solve();
+            var requestBody = JsonConvert.SerializeObject(token);
+            var validationUri = Resources.FutHome + Resources.FunCaptchaValidate;
+            var response = await HttpClient.PostAsync(validationUri, new StringContent(requestBody));
         }
 
         protected async Task<Auth> AuthAsync()
