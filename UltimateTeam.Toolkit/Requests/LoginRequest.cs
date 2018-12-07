@@ -159,7 +159,7 @@ namespace UltimateTeam.Toolkit.Requests
             contentData = await loginResponse.Content.ReadAsStringAsync();
 
             _authType = AuthenticationType.Unknown;
-            if (contentData.Contains("send you a code to:") || contentData.Contains("Send to my Primary Email"))
+            if (contentData.Contains("send you a code to:") || contentData.Contains("Send to my Primary Email") || contentData.Contains("In order to verify your identity"))
             {
                 _authType = AuthenticationType.Email;
             }
