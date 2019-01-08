@@ -30,7 +30,8 @@ namespace UltimateTeam.Toolkit.Requests
                 .PostAsync(uriString, new StringContent(content))
                 .ConfigureAwait(false);
 
-            return await DeserializeAsync<ListAuctionResponse>(tradepileResponseMessage);
+            return await DeserializeAsync<ListAuctionResponse>(tradepileResponseMessage)
+                .ConfigureAwait(false);
         }
     }
 }

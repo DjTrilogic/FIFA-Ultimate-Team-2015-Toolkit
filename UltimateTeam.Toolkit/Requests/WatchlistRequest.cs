@@ -16,10 +16,10 @@ namespace UltimateTeam.Toolkit.Requests
 
             AddCommonHeaders();
             watchlistResponseMessageTask = HttpClient.GetAsync(uriString + $"?_={ DateTime.Now.ToUnixTime()}");
-            
+
             var watchlistResponseMessage = await watchlistResponseMessageTask.ConfigureAwait(false);
 
-            return await DeserializeAsync<WatchlistResponse>(watchlistResponseMessage);
+            return await DeserializeAsync<WatchlistResponse>(watchlistResponseMessage).ConfigureAwait(false);
         }
     }
 }

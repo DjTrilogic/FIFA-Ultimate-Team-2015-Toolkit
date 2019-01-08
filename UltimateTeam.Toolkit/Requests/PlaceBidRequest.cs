@@ -30,7 +30,7 @@ namespace UltimateTeam.Toolkit.Requests
 
             var bidResponseMessage = await bidResponseMessageTask.ConfigureAwait(false);
 
-            return await DeserializeAsync<AuctionResponse>(bidResponseMessage);
+            return await DeserializeAsync<AuctionResponse>(bidResponseMessage).ConfigureAwait(false);
         }
     }
 }

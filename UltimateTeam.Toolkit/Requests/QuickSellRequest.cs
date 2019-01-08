@@ -28,7 +28,7 @@ namespace UltimateTeam.Toolkit.Requests
 
             var quickSellResponse = await quickSellResponseTask.ConfigureAwait(false);
 
-            return await DeserializeAsync<QuickSellResponse>(quickSellResponse);
+            return await DeserializeAsync<QuickSellResponse>(quickSellResponse).ConfigureAwait(false);
         }
     }
 }

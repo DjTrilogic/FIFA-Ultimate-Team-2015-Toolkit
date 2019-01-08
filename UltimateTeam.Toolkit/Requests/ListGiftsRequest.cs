@@ -1,7 +1,5 @@
-using System.Net.Http;
 using System.Threading.Tasks;
 using UltimateTeam.Toolkit.Constants;
-using UltimateTeam.Toolkit.Exceptions;
 using UltimateTeam.Toolkit.Models;
 
 namespace UltimateTeam.Toolkit.Requests
@@ -15,7 +13,8 @@ namespace UltimateTeam.Toolkit.Requests
                 .GetAsync(Resources.FutHome + Resources.ActiveMessageList)
                 .ConfigureAwait(false);
 
-            return await DeserializeAsync<ListGiftsResponse>(responseMessage);
+            return await DeserializeAsync<ListGiftsResponse>(responseMessage)
+                .ConfigureAwait(false);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace UltimateTeam.Toolkit.Requests
 
             var tradepileResponseMessage = await tradepileResponseMessageTask.ConfigureAwait(false);
 
-            return await DeserializeAsync<SendItemToTradePileResponse>(tradepileResponseMessage);
+            return await DeserializeAsync<SendItemToTradePileResponse>(tradepileResponseMessage).ConfigureAwait(false);
         }
     }
 }

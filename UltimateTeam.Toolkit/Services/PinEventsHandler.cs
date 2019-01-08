@@ -27,8 +27,8 @@ namespace UltimateTeam.Toolkit.Services
 
         public async Task Initialize()
         {
-            var response = await _httpClient.GetAsync("https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_1.js");
-            var content = await response.Content.ReadAsStringAsync();
+            var response = await _httpClient.GetAsync("https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_1.js").ConfigureAwait(false);
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var match = Regex.Match(content, "plat:\"(.+?)\"");
             plat = match.Success ? match.Groups[1].Value : "web";
             match = Regex.Match(content, "taxv:\"(.+?)\"");
@@ -42,8 +42,8 @@ namespace UltimateTeam.Toolkit.Services
             pidt = Regex.Match(content, "pidt:\"(.+?)\"").Groups[1].Value;
             v = Regex.Match(content, "APP_VERSION=\"([0-9\\.]+?)\"").Groups[1].Value;
 
-            response = await _httpClient.GetAsync("https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_2.js");
-            content = await response.Content.ReadAsStringAsync();
+            response = await _httpClient.GetAsync("https://www.easports.com/fifa/ultimate-team/web-app/js/compiled_2.js").ConfigureAwait(false);
+            content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             if (taxv == null)
             {
                 match = Regex.Match(content, "PinManager.TAXONOMY_VERSION=([0-9\\.]+)");

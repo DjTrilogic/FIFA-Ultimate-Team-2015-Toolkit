@@ -9,7 +9,7 @@ namespace UltimateTeam.Toolkit.Requests
             var uriString = "https://utas.external.s2.fut.ea.com/ut/auth";
             try
             {
-                var response = await HttpClient.DeleteAsync(uriString);
+                var response = await HttpClient.DeleteAsync(uriString).ConfigureAwait(false);
             }
             catch
             {

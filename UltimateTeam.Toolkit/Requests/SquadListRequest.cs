@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using UltimateTeam.Toolkit.Constants;
 using UltimateTeam.Toolkit.Extensions;
@@ -20,7 +19,7 @@ namespace UltimateTeam.Toolkit.Requests
                 .GetAsync(uriString)
                 .ConfigureAwait(false);
 
-            return await DeserializeAsync<SquadListResponse>(squadListResponseMessage);
+            return await DeserializeAsync<SquadListResponse>(squadListResponseMessage).ConfigureAwait(false);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace UltimateTeam.Toolkit.Requests
             var reListMessage = await reListMessageTask.ConfigureAwait(false);
             reListMessage.EnsureSuccessStatusCode();
 
-            return await DeserializeAsync<RelistResponse>(reListMessage);
+            return await DeserializeAsync<RelistResponse>(reListMessage).ConfigureAwait(false);
         }
     }
 }

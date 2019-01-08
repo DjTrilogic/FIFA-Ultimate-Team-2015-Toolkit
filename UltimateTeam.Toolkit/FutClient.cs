@@ -36,7 +36,7 @@ namespace UltimateTeam.Toolkit
             loginDetails.ThrowIfNullArgument();
 
             var loginRequest = RequestFactories.LoginRequestFactory(loginDetails, twoFactorCodeProvider, loginPriority, captchaSolver);
-            var loginResponse = await loginRequest.PerformRequestAsync();
+            var loginResponse = await loginRequest.PerformRequestAsync().ConfigureAwait(false);
             RequestFactories.LoginResponse = loginResponse;
             RequestFactories.LoginDetails = loginDetails;
             var pinEventsHandler = new PinEventsHandler(loginResponse, RequestFactories.HttpClient);

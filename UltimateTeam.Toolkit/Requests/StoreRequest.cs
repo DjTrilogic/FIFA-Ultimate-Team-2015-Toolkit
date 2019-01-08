@@ -20,7 +20,7 @@ namespace UltimateTeam.Toolkit.Requests
                 .PostAsync(uriString, new StringContent(" "))
                 .ConfigureAwait(false);
 
-            return await DeserializeAsync<StoreResponse>(storeResponseMessage);
+            return await DeserializeAsync<StoreResponse>(storeResponseMessage).ConfigureAwait(false);
         }
     }
 }

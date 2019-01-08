@@ -30,7 +30,7 @@ namespace UltimateTeam.Toolkit.Requests
                 .PostAsync(uriString, new StringContent(content))
                 .ConfigureAwait(false);
 
-            return await DeserializeAsync<PurchasedPackResponse>(purchasedItemsMessage);
+            return await DeserializeAsync<PurchasedPackResponse>(purchasedItemsMessage).ConfigureAwait(false);
         }
     }
 }

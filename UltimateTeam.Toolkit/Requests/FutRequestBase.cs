@@ -163,7 +163,8 @@ namespace UltimateTeam.Toolkit.Requests
         protected static async Task<T> DeserializeAsync<T>(HttpResponseMessage message) where T : class
         {
             message.EnsureSuccessStatusCode();
-            var messageContent = await message.Content.ReadAsStringAsync();
+            var messageContent = await message.Content.ReadAsStringAsync()
+                .ConfigureAwait(false);
             T deserializedObject = null;
 
             try

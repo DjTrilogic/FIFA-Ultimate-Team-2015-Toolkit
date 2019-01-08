@@ -28,7 +28,7 @@ namespace UltimateTeam.Toolkit.Requests
 
             var tradeStatusResponseMessage = await tradeStatusResponseMessageTask.ConfigureAwait(false);
 
-            return await DeserializeAsync<AuctionResponse>(tradeStatusResponseMessage);
+            return await DeserializeAsync<AuctionResponse>(tradeStatusResponseMessage).ConfigureAwait(false);
         }
     }
 }

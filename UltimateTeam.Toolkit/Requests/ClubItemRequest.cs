@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using UltimateTeam.Toolkit.Constants;
 using UltimateTeam.Toolkit.Extensions;
@@ -24,14 +23,14 @@ namespace UltimateTeam.Toolkit.Requests
         public async Task<ClubItemResponse> PerformRequestAsync()
         {
             var uriString = Resources.FutHome + Resources.MyClub + $"&type={_listType}";
-                uriString += "&_=" + DateTime.Now.ToUnixTime();
-                AddCommonHeaders();
+            uriString += "&_=" + DateTime.Now.ToUnixTime();
+            AddCommonHeaders();
 
             var clubItemResponseMessage = await HttpClient
                     .GetAsync(uriString)
                     .ConfigureAwait(false);
 
-            return await DeserializeAsync<ClubItemResponse>(clubItemResponseMessage);
+            return await DeserializeAsync<ClubItemResponse>(clubItemResponseMessage).ConfigureAwait(false);
         }
     }
 }

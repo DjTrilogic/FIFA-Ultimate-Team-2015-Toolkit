@@ -33,7 +33,7 @@ namespace UltimateTeam.Toolkit.Requests
 
             var clubResponseMessage = await clubResponseMessageTask.ConfigureAwait(false);
 
-            return await DeserializeAsync<SendItemToClubResponse>(clubResponseMessage);
+            return await DeserializeAsync<SendItemToClubResponse>(clubResponseMessage).ConfigureAwait(false);
         }
     }
 }

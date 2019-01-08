@@ -25,7 +25,9 @@ namespace UltimateTeam.Toolkit.Requests
             uriString += $"&_={DateTime.Now.ToUnixTime()}";
             definitionResponseTask = HttpClient.GetAsync(uriString);
 
-            return await DeserializeAsync<DefinitionResponse>(await definitionResponseTask.ConfigureAwait(false));
+            return await DeserializeAsync<DefinitionResponse>
+                (await definitionResponseTask.ConfigureAwait(false))
+                .ConfigureAwait(false);
         }
     }
 }
