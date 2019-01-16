@@ -48,8 +48,15 @@ namespace UltimateTeam.Toolkit
 
         public Task LogoutAsync()
         {
-            var logoutRequest = RequestFactories.LogoutRequestFactory();
-            return logoutRequest.PerformRequestAsync();
+            try
+            {
+                var logoutRequest = RequestFactories.LogoutRequestFactory();
+                return logoutRequest.PerformRequestAsync();
+            }
+            catch (Exception e)
+            {
+            }
+            return Task.CompletedTask;
         }
 
         public Task<AuctionResponse> SearchAsync(SearchParameters searchParameters)
