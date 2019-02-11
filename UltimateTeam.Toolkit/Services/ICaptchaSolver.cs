@@ -1,16 +1,18 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using UltimateTeam.Toolkit.Models;
+using UltimateTeam.Toolkit.Requests;
 
 namespace UltimateTeam.Toolkit.Services
 {
+    public delegate void CaptchaDelegate(LoginDetails loginDetails, bool success, string errorMessage);
+
     public interface ICaptchaSolver
     {
         bool UseSameProxy { get; }
         bool IsEnabled { get; }
 
-        Task<CaptchaValidationRequest> Solve(IWebProxy webProxy);
+        Task<CaptchaValidationRequest> Solve(LoginRequest loginRequest);
 
-        Task<CaptchaValidationRequest> Solve();
+        event CaptchaDelegate OnCaptchaHandled;
     }
 }

@@ -13,7 +13,7 @@ using UltimateTeam.Toolkit.Services;
 
 namespace UltimateTeam.Toolkit.Requests
 {
-    internal class LoginRequest : FutRequestBase, IFutRequest<LoginResponse>
+    public class LoginRequest : FutRequestBase, IFutRequest<LoginResponse>
     {
         private IHasher _hasher;
         private ITwoFactorCodeProvider _twoFactorCodeProvider;
@@ -326,7 +326,7 @@ namespace UltimateTeam.Toolkit.Requests
                 throw new UnhandledCaptchaException($"Captcha triggered but the captcha solver is disabled");
             }
 
-            var token = CaptchaSolver.UseSameProxy ? await CaptchaSolver.Solve(HttpClient.MessageHandler.Proxy).ConfigureAwait(false) : await CaptchaSolver.Solve().ConfigureAwait(false);
+            var token = await CaptchaSolver.Solve(this).ConfigureAwait(false);
             var requestBody = JsonConvert.SerializeObject(token);
             var validationUri = Resources.FutHome + Resources.FunCaptchaValidate;
             var response = await HttpClient.PostAsync(validationUri, new StringContent(requestBody)).ConfigureAwait(false);
