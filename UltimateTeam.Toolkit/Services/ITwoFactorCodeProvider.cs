@@ -5,6 +5,7 @@ namespace UltimateTeam.Toolkit.Services
 {
     public interface ITwoFactorCodeProvider
     {
+        AuthenticationType HandledAuthType { get;}
         Task<string> GetTwoFactorCodeAsync(AuthenticationType authType);
     }
 }

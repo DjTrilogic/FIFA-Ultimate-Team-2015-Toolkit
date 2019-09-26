@@ -145,11 +145,11 @@ namespace UltimateTeam.Toolkit.Requests
             var contentData = await loginResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             AuthType = AuthenticationType.Unknown;
-            if (contentData.Contains("send you a code to:") || contentData.Contains("Send to my Primary Email") || contentData.Contains("In order to verify your identity"))
+            if (TwoFactorCodeProvider.HandledAuthType == AuthenticationType.Email &&(contentData.Contains("send you a code to:") || contentData.Contains("Send to my Primary Email") || contentData.Contains("In order to verify your identity")) )
             {
                 AuthType = AuthenticationType.Email;
             }
-            else if (contentData.Contains("App Authenticator"))
+            else if (TwoFactorCodeProvider.HandledAuthType == AuthenticationType.App && contentData.Contains("App Authenticator"))
             {
                 AuthType = AuthenticationType.App;
             }
